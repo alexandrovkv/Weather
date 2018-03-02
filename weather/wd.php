@@ -68,58 +68,58 @@ switch($provider) {
 case "openweathermap":
     $url = $weatherProviders[$provider]["apiUrl"] . "?" .
            "lat=" . $latitude .
-	         "&lon=" . $longitude .
-	         "&units=" . $units .
-	         "&lang=" . $lang .
-	         "&APPID=" . $weatherProviders[$provider]["apiKey"];
+	   "&lon=" . $longitude .
+	   "&units=" . $units .
+	   "&lang=" . $lang .
+	   "&APPID=" . $weatherProviders[$provider]["apiKey"];
     break;
 case "worldmeteorologicalorganization":
     $url = $weatherProviders[$provider]["apiUrl"] . "?" .
            "q=" . $latitude . "," . $longitude .
-	         "&lang=" . $lang .
-	         "&key=" . $weatherProviders[$provider]["apiKey"];
+	   "&lang=" . $lang .
+	   "&key=" . $weatherProviders[$provider]["apiKey"];
     break;
 case "wunderground":
     $url = $weatherProviders[$provider]["apiUrl"] . "/" .
-    	     $weatherProviders[$provider]["apiKey"] . "/" .
-	         "conditions/q/" .
+    	   $weatherProviders[$provider]["apiKey"] . "/" .
+	   "conditions/q/" .
            $latitude . "," . $longitude . ".json";
     break;
 case "darksky":
     $url = $weatherProviders[$provider]["apiUrl"] . "/" .
     	   $weatherProviders[$provider]["apiKey"] . "/" .
            $latitude . "," . $longitude . "?" .
-	         "units=" . ($units == "metric" ? "si" : "us") .
-	         "&exclude=minutely,hourly,daily,alerts,flags";
+	   "units=" . ($units == "metric" ? "si" : "us") .
+	   "&exclude=minutely,hourly,daily,alerts,flags";
     break;
 case "weatherbit":
     $url = $weatherProviders[$provider]["apiUrl"] . "?" .
            "lat=" . $latitude .
-	          "&lon=" . $longitude .
-	          "&lang=" . $lang .
-	          "&units=" . ($units == "metric" ? "M" : "I") .
-	          "&key=" . $weatherProviders[$provider]["apiKey"];
+	   "&lon=" . $longitude .
+	   "&lang=" . $lang .
+	   "&units=" . ($units == "metric" ? "M" : "I") .
+	   "&key=" . $weatherProviders[$provider]["apiKey"];
     break;
 case "worldweatheronline":
     $url = $weatherProviders[$provider]["apiUrl"] . "?" .
            "q=" . $latitude . "," . $longitude .
-	         "&includelocation=yes" .
-	         "&format=json" .
-	         "&lang=" . $lang .
-	         "&key=" . $weatherProviders[$provider]["apiKey"];
+	   "&includelocation=yes" .
+	   "&format=json" .
+	   "&lang=" . $lang .
+	   "&key=" . $weatherProviders[$provider]["apiKey"];
     break;
 case "geocode":
     $url = $geoCodeUrl . "?" .
            "format=jsonv2" .
-	         "&q=" . $request["q"];
+	   "&q=" . $request["q"];
     break;
 case "geocodereverse":
     $url = $geoCodeReverseUrl . "?" .
            "format=jsonv2" .
            "&addressdetails=1" .
            "&zoom=18" .
-	         "&lat=" . $latitude .
-	         "&lon=" . $longitude;
+	   "&lat=" . $latitude .
+	   "&lon=" . $longitude;
     break;
 default:
     header("HTTP/1.1 400 bad request (unknown provider $provider)");
