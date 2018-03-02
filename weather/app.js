@@ -9,7 +9,6 @@ weather = {
     currentProvider:    null,
     wdUrl:              'wd.php',
     osmUrl:             '//openstreetmap.org/#map=16',
-    cityListUrl:        'city.list.json',
     units:              'metric',
     lang:               'ru',
     currentYear:        null,
@@ -32,8 +31,6 @@ weather = {
     msTimer:            null,
 
     notify:          null,
-    cityDialog:      null,
-    cityList:        null,
     locName:         null,
     locCoords:       null,
     seasonIcon:      null,
@@ -114,8 +111,6 @@ weather = {
 	this.currentYear = now.getFullYear();
 	this.currentProvider = weatherProviders[provider];
 
-	document.addEventListener('keyup', this.kbHandler, false);
-
 	if(!this.currentProvider) {
 	    console.error('unknown weather provider:', provider);
 	    return;
@@ -133,12 +128,9 @@ weather = {
 	    });
 	} else {
             console.error('geolocation not supported');
-	    this.getCity();
 	}
 
 	this.notify = document.getElementById('notify');
-	this.cityDialog = document.getElementById('city-dialog');
-	this.cityList = document.getElementById('city-list');
 	this.locName = document.getElementById('locName');
 	this.locCoords = document.getElementById('locCoords');
 	this.seasonIcon = document.getElementById('seasonIcon');
@@ -167,31 +159,7 @@ weather = {
 	this.wdProvider.innerHTML = this.currentProvider.name;
 	this.wdProvider.title = this.currentProvider.description;
 
-	dialogPolyfill.registerDialog(this.cityDialog);
-	document.getElementById('cancel-dialog').onclick = function() {
-	    me.cityDialog.close(null);
-	};
-	document.getElementById('submit-dialog').onclick = function() {
-	    var input = document.getElementById('city-name');
-	    var name = input.value;
-	    
-	    me.cityDialog.close(name);
-	};
-	this.cityDialog.addEventListener('close', function() {
-	    if(this.returnValue) {
-		var url = me.owmApiUrl + '?' +
-		    'q=' + encodeURIComponent(this.returnValue) +
-		    '&units=' + me.units +
-		    '&lang=' + me.lang +
-		    '&APPID=' + me.owmAppId;
-
-		//me.clearWeatherData();
-		//me.sendRequest(url, me.updateWeatherData, me);
-	    }
-	});
-
 	this.updateClock();
-
 	this.initSounds();
     },
 
@@ -207,24 +175,6 @@ weather = {
 	    this.notifySound = document.createElement('audio');
 	    this.notifySound.src = 'media/sounds/notify.ogg';
 	}
-
-	/*this.windSound = new Howl({
-	    src:  'media/sounds/wind.ogg',
-	    loop: true
-	});
-	this.rainSound = new Howl({
-	    src:  'media/sounds/rain.ogg',
-	    loop: true
-	});
-	this.thunderSound = new Howl({
-	    src:  'media/sounds/thunder.ogg',
-	    loop: true
-	});
-	this.nightSound = new Howl({
-	    src:     'media/sounds/night.ogg',
-	    loop:    true,
-	    volume:  .04
-	});*/
     },
 
     updateClock: function() {
@@ -263,18 +213,6 @@ weather = {
 
     positionError: function(error) {
         console.error(error);
-	this.getCity();
-    },
-
-    getCity: function() {
-	var input = document.getElementById('city-name');
-
-	this.cityDialog.showModal();
-	input.placeholder = 'Loading cities...';
-	this.sendRequest(this.cityListUrl, function(data) {
-	    populateList(this.cityList, data);
-	    input.placeholder = 'Enter city name';
-	}, this);
     },
 
     updateAstrData: function(now, coords) {
@@ -1211,246 +1149,6 @@ weather = {
 	return phaseName;
     },
 
-    updateEffects: function(data) {
-        var wind = data.wind;
-        var weather = data.weather[0];
-        var weatherGroup = weather.main;
-        var weatherId = weather.id;
-	var rainVolume = 0, thunderVolume = 0;
-
-	switch(weatherId) {
-	    // Thunderstorm
-	case 200:  // thunderstorm with light rain
-	    rainVolume = 0.3;
-	    thunderVolume = 0.3;
-	    break;
-	case 201:  // thunderstorm with rain
-	    rainVolume = 0.5;
-	    thunderVolume = 0.5;
-	    break;
-	case 202:  // thunderstorm with heavy rain
-	    rainVolume = 0.7;
-	    thunderVolume = 0.7;
-	    break;
-	case 210:  // light thunderstorm
-	case 211:  // thunderstorm
-	case 212:  // heavy thunderstorm
-	case 221:  // ragged thunderstorm
-	case 230:  // thunderstorm with light drizzle
-	    rainVolume = 0.2;
-	    thunderVolume = 0.2;
-	    break;
-	case 231:  // thunderstorm with drizzle
-	    rainVolume = 0.3;
-	    thunderVolume = 0.3;
-	    break;
-	case 232:  // thunderstorm with heavy drizzle
-	    rainVolume = 0.4;
-	    thunderVolume = 0.4;
-	    break;
-
-	    // Drizzle
-	case 300:  // light intensity drizzle
-	    rainVolume = 0.2;
-	    thunderVolume = 0.0;
-	    break;
-	case 301:  // drizzle
-	    rainVolume = 0.3;
-	    thunderVolume = 0.0;
-	    break;
-	case 302:  // heavy intensity drizzle
-	    rainVolume = 0.3;
-	    thunderVolume = 0.0;
-	    break;
-	case 310:  // light intensity drizzle rain
-	    rainVolume = 0.4;
-	    thunderVolume = 0.0;
-	    break;
-	case 311:  // drizzle rain
-	    rainVolume = 0.4;
-	    thunderVolume = 0.0;
-	    break;
-	case 312:  // heavy intensity drizzle rain
-	    rainVolume = 0.5;
-	    thunderVolume = 0.0;
-	    break;
-	case 313:  // shower rain and drizzle
-	    rainVolume = 0.5;
-	    thunderVolume = 0.0;
-	    break;
-	case 314:  // heavy shower rain and drizzle
-	    rainVolume = 0.6;
-	    thunderVolume = 0.0;
-	    break;
-	case 321:  // shower drizzle
-	    rainVolume = 0.7;
-	    thunderVolume = 0.0;
-	    break;
-
-	    // Rain
-	case 500:  // light rain
-	    rainVolume = 0.4;
-	    thunderVolume = 0.0;
-	    break;
-	case 501:  // moderate rain
-	    rainVolume = 0.5;
-	    thunderVolume = 0.0;
-	    break;
-	case 502:  // heavy intensity rain
-	    rainVolume = 0.6;
-	    thunderVolume = 0.0;
-	    break;
-	case 503:  // very heavy rain
-	    rainVolume = 0.7;
-	    thunderVolume = 0.0;
-	    break;
-	case 504:  // extreme rain
-	    rainVolume = 0.9;
-	    thunderVolume = 0.0;
-	    break;
-	case 511:  // freezing rain
-	case 520:  // light intensity shower rain
-	case 521:  // shower rain
-	case 522:  // heavy intensity shower rain
-	case 531:  // ragged shower rain
-	    rainVolume = 1.0;
-	    thunderVolume = 0.0;
-	    break;
-
-	    // Snow
-	case 600:  // light snow
-	case 601:  // snow
-	case 602:  // heavy snow
-	case 611:  // sleet
-	case 612:  // shower slee
-	case 615:  // light rain and snow
-	case 616:  // rain and snow
-	case 620:  // ight shower snow
-	case 621:  // shower snow
-	case 622:  // heavy shower snow
-	    rainVolume = 0.0;
-	    thunderVolume = 0.0;
-	    break;
-
-	    // Atmosphere
-	case 701:  // mist
-	case 711:  // smoke
-	case 721:  // haze
-	case 731:  // sand, dust whirls
-	case 741:  // fog
-	case 751:  // sand
-	case 761:  // dust
-	case 762:  // volcanic ash
-	case 771:  // squalls
-	case 781:  // tornado
-	    rainVolume = 0.0;
-	    thunderVolume = 0.0;
-	    break;
-
-	    // Clouds
-	case 800:  // clear sky
-	case 801:  // few clouds
-	case 802:  // scattered clouds
-	case 803:  // broken clouds
-	case 804:  // overcast clouds
-	    rainVolume = 0.0;
-	    thunderVolume = 0.0;
-	    break;
-
-	    // Extreme
-	case 900:  // tornado
-	case 901:  // tropical storm
-	case 902:  // hurricane
-	case 903:  // cold
-	case 904:  // hot
-	case 905:  // windy
-	case 906:  // hail
-	    rainVolume = 0.0;
-	    thunderVolume = 0.0;
-	    break;
-
-	    // Additional
-	case 951:  // calm
-	case 952:  // light breeze
-	case 953:  // gentle breeze
-	case 954:  // moderate breeze
-	case 955:  // fresh breeze
-	case 956:  // strong breeze
-	case 957:  // high wind, near gale
-	case 958:  // gale
-	case 959:  // severe gale
-	case 960:  // storm
-	case 961:  // violent storm
-	case 962:  // hurricane
-	    rainVolume = 0.0;
-	    thunderVolume = 0.0;
-	    break;
-
-	default:
-	    break;
-	}
-
-	this.wind(wind);
-	this.rain(rainVolume);
-	this.thunder(thunderVolume);
-    },
-
-    wind: function(wind) {
-	var speed = wind.speed;
-	var degree = wind.deg;
-
-        if(speed > 0) {
-            console.debug('turn on wind');
-            var volume = Math.atan(speed / 6) / (Math.PI / 2);
-	    var x = Math.sin(degree * Math.PI / 180); // swap axis,
-	    var y = Math.cos(degree * Math.PI / 180); //
-            console.debug('wind speed:', speed, ', volume:', volume);
-	    console.debug('degree:', degree, x, y);
-
-            this.windSound.play();
-            this.windSound.fade(this.windSound.volume(), volume, 1000);
-	    this.windSound.pos(x, y, 0);
-            console.debug('wind volume:', this.windSound.volume());
-        } else {
-            console.debug('turn off wind');
-            this.windSound.fade(this.windSound.volume(), 0, 3000);
-            this.windSound.once('fade', this.windSound.stop);
-        }
-    },
-
-    rain: function(volume) {
-	if(volume) {
-            console.debug('turn on rain');
-            this.rainSound.play();
-            this.rainSound.fade(this.rainSound.volume(), volume, 1000);
-	} else {
-            console.debug('turn off rain');
-            this.rainSound.fade(this.rainSound.volume(), 0, 3000);
-            this.rainSound.once('fade', this.rainSound.stop);
-	}
-    },
-
-    thunder: function(volume) {
-	if(volume) {
-            console.debug('turn on thunder');
-            this.thunderSound.play();
-            this.thunderSound.fade(this.thunderSound.volume(), volume, 1000);
-	} else {
-            console.debug('turn off thunder');
-            this.thunderSound.fade(this.thunderSound.volume(), 0, 3000);
-            this.thunderSound.once('fade', this.thunderSound.stop);
-	}
-    },
-
-    night: function(run) {
-	if(run) {
-            this.nightSound.play();
-	} else {
-            this.nightSound.fade(.05, 0, 900);
-            this.nightSound.once('fade', this.nightSound.stop);
-	}
-    },
-
     geoCode: function(query, callback, scope) {
         var url = this.wdUrl + '?' +
             'provider=geocode' +
@@ -1555,34 +1253,6 @@ weather = {
         return d + '\u00B0 ' + m + '\u0027 ' + s + '\u0022';
     },
 
-    getCardinalDirection: function(angle) {
-	if(typeof angle === 'string')
-	    angle = parseInt(angle);
-	if(angle <= 0 || angle > 360 || typeof angle === 'undefined')
-	    return '☈';
-
-	const arrows = {
-	    north:      '↑ N',
-	    north_east: '↗ NE',
-	    east:       '→ E',
-	    south_east: '↘ SE',
-	    south:      '↓ S',
-	    south_west: '↙ SW',
-	    west:       '← W',
-	    north_west: '↖ NW'
-	};
-	const directions = Object.keys(arrows);
-	const degree = 360 / directions.length;
-
-	angle += degree / 2;
-
-	for(let i = 0; i < directions.length; i++) {
-	    if(angle >= (i * degree) && angle < (i + 1) * degree)
-		return arrows[directions[i]];
-	}
-
-	return arrows['north'];
-    },
     degToCompass: function(num) {
 	const dirs = ["N", "NNE", "NE", "ENE",
 		      "E", "ESE", "SE", "SSE",
@@ -1762,36 +1432,6 @@ class Data {
     }
 }
 
-
-function QueryData(queryString, preserveDuplicates){
-    if(queryString == undefined)
-        queryString = location.search ? location.search : '';
-
-    if(queryString.charAt(0) == '?')
-        queryString = queryString.substring(1);
-
-    if(queryString.length > 0) {
-        queryString = queryString.replace(/\+/g, ' ');
-
-        var queryComponents = queryString.split(/[&;]/g);
-
-        for(var index = 0; index < queryComponents.length; index ++) {
-            var keyValuePair = queryComponents[index].split('=');
-            var key          = decodeURIComponent(keyValuePair[0]);
-            var value        = keyValuePair.length > 1
-                ? decodeURIComponent(keyValuePair[1])
-                : '';
-
-            if(preserveDuplicates) {
-                if(!(key in this))
-		    this[key] = [];
-                this[key].push(value);
-            } else {
-                this[key] = value;
-            }
-        }
-    }
-}
 
 Object.toQueryString = function(object, base) {
     var queryString = [];
