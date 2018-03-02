@@ -1,11 +1,8 @@
 <?php
 
-
-
 ini_set('user_agent', $_SERVER["HTTP_USER_AGENT"]);
 
 date_default_timezone_set(date_default_timezone_get());
-
 
 $time = $_SERVER['REQUEST_TIME'];
 $remote_addr = $_SERVER['REMOTE_ADDR'];
@@ -19,7 +16,6 @@ case 'GET':
     break;
 default:
     header("HTTP/1.1 405 method not allowed");
-    http_response_code(405);
     exit(1);
 }
 
