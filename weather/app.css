@@ -1,0 +1,335 @@
+/*
+ * Weather CSS
+ */
+
+
+html, body {
+    margin: 0px;
+    padding: 0px;
+}
+
+body {
+    color: white;
+    font-family: helvetica;
+    background-image: url("media/images/night-landscape.jpg");
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
+}
+
+.Container {
+    width: 95%;
+    //min-width: 500px;
+    margin: auto;
+}
+
+.bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: -100;
+    //filter: blur(5px);
+    //animation: fadeInOut 86400s linear infinite;
+}
+
+a {
+    color: white;
+}
+a:focus {
+    border: none;
+    outline: none;
+}
+
+header {
+    width: 100%;
+    margin: 10px;
+    text-align: center;
+    //mix-blend-mode: difference;
+}
+header span {
+    margin: 0 10px;
+    font-size: 230%;
+}
+header a {
+    margin: 0 10px;
+    font-size: 100%;
+    text-decoration: none;
+}
+header i {
+    margin: 0 10px;
+    font-size: 150%;
+}
+header img {
+    height: 36px;
+    //max-height: calc(100% - 50px);
+    //max-width: 100%;
+}
+
+#dtVal {
+    font-size: 100%;
+}
+
+nav {
+    width: 100%;
+    margin: 30px 0;
+    //background-color: #ff6a00;
+}
+
+dialog {
+    border: 2px solid rgba(0, 0, 0, 0.9);
+    border-radius: 6px;
+    box-shadow: 0 3px 7px rgba(0, 0, 0, 0.5);
+}
+dialog::backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #2575ed;
+    opacity: .5;
+}
+dialog + .backdrop {
+    background-color: rgba(0, 0, 0, 0.6);
+}
+
+input[type="text"] {
+}
+
+#reload {
+    width: 15px;
+    height: 15px;
+    padding: 0 3px 3px 3px;
+    border-radius: 5px;
+    cursor: pointer;
+    background: linear-gradient(
+	0deg,
+	hsla(0, 0%, 10%, .6),
+	hsla(0, 0%, 10%, .1)
+    );
+}
+#reload:hover {
+    background: linear-gradient(
+	0deg,
+	hsla(0, 0%, 10%, .9),
+	hsla(0, 0%, 10%, .3)
+    );
+}
+#reload:active {
+    background: linear-gradient(
+	0deg,
+	hsla(0, 0%, 10%, .3),
+	hsla(0, 0%, 10%, .9)
+    );
+}
+
+.content {
+    width: 100%;
+    padding: 10px 0;
+    text-align: center;
+    //mix-blend-mode: difference;
+}
+
+.main {
+    width: 100%;
+    margin: 50px 0;
+    text-shadow: 5px 5px rgba(0, 0, 0, 0.5);
+}
+.main i {
+    margin: 0 20px;
+    font-size: 1000%;
+}
+.main span {
+    margin: 0 10px;
+    font-size: 400%;
+    font-weight: bold;
+}
+
+.data {
+    width: 95%;
+    //margin: 10px 0;
+    font-size: 160%
+    text-shadow: 5px 5px rgba(0, 0, 0, 0.5);
+}
+.data div {
+    display: inline-block;
+    width: 15%;
+    border-radius: 10px;
+    //margin: 0 1%;
+    padding: 10px;
+    background-color: rgba(0, 0, 0, 0.2);
+    //box-shadow: 5px 5px #333;
+}
+.data i {
+    font-size: 150%
+}
+
+footer {
+    width: 100%;
+    margin-top: 20px;
+    text-align: center;
+    //mix-blend-mode: difference;
+}
+
+.notify {
+    visibility: hidden;
+    margin-left: -125px;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    text-align: center;
+    border-radius: 10px;
+    padding: 16px;
+    position: fixed;
+    z-index: 1;
+    left: 50%;
+    top: 30px;
+    font-size: 18px;
+    cursor: default;
+}
+
+.notify.show {
+    visibility: visible;
+    -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+    animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
+
+[tooltip]:before {            
+    position: absolute;
+    content: attr(tooltip);
+    opacity: 0;
+}
+[tooltip]:hover:before {        
+    opacity: 1;
+}
+[tooltip]:not([tooltip-persistent]):before {
+    pointer-events: none;
+}
+
+.timeline {
+    position: relative;
+    width: 100%;
+    height: 20px;
+    margin: 30px 0;
+    border-radius: 5px;
+    background: linear-gradient(
+	0deg,
+	hsl(0, 0%, 0%),
+	hsl(0, 0%, 25%)
+    );
+}
+.astr {
+    position: absolute;
+    width: 80%;
+    height: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
+    border-radius: 5px;
+    z-index: 10;
+    background: linear-gradient(
+	0deg,
+	hsl(240, 100%, 15%),
+	hsl(240, 100%, 45%)
+    );
+}
+.naut {
+    position: absolute;
+    width: 60%;
+    height: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
+    border-radius: 5px;
+    z-index: 20;
+    background: linear-gradient(
+	0deg,
+	hsl(180, 100%, 10%),
+	hsl(180, 100%, 20%)
+    );
+}
+.civil {
+    position: absolute;
+    width: 40%;
+    height: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
+    border-radius: 5px;
+    z-index: 30;
+    background: linear-gradient(
+	0deg,
+	hsl(150, 15%, 25%),
+	hsl(150, 15%, 50%)
+    );
+}
+.day {
+    position: absolute;
+    width: 20%;
+    height: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
+    border-radius: 5px;
+    z-index: 40;
+    background: linear-gradient(
+	0deg,
+	hsl(60, 100%, 20%),
+	hsl(60, 100%, 100%)
+    );
+}
+.cur-time {
+    position: absolute;
+    width: 4px;
+    top: -20%;
+    bottom: -20%;
+    background-color: #f00;
+    z-index: 50;
+    //animation: moveCursor 86400s infinite linear;
+}
+
+
+@-webkit-keyframes fadein {
+    from {top: 0; opacity: 0;} 
+    to {top: 30px; opacity: 1;}
+}
+
+@keyframes fadein {
+    from {top: 0; opacity: 0;}
+    to {top: 30px; opacity: 1;}
+}
+
+@-webkit-keyframes fadeout {
+    from {top: 30px; opacity: 1;} 
+    to {top: 0; opacity: 0;}
+}
+
+@keyframes fadeout {
+    from {top: 30px; opacity: 1;}
+    to {top: 0; opacity: 0;}
+}
+
+
+@keyframes moveCursor {
+    //from {left: 0;}
+    to {left: 100%;}
+}
+
+
+@keyframes fadeInOut {
+    0% {
+	background-color: rgba(0, 0, 0, .9);
+    }
+    50% {
+	background-color: rgba(0, 0, 0, .0);
+    }
+    100% {
+	background-color: rgba(0, 0, 0, .9);
+    }
+}
+
