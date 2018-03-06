@@ -163,13 +163,6 @@ weather = {
 	this.initSounds();
     },
 
-    kbHandler: function(e) {
-	if(e.altkey && e.which == 65) {
-	    console.debug('kb handler:', e.keyCode);
-	    return false;
-	}
-    },
-
     initSounds: function() {
 	if(!this.notifySound) {
 	    this.notifySound = document.createElement('audio');
@@ -223,8 +216,10 @@ weather = {
 	var moonIllumination = SunCalc.getMoonIllumination(now);
 
 	var moonPhaseClassName = this.getMoonPhaseName(moonIllumination.phase, false);
+	var sunAlt = Math.round(sunPos.altitude * 180 / Math.PI);
+	var sunAz = Math.round(sunPos.azimuth * 180 / Math.PI) - 180;
 	var moonAlt = Math.round(moonPos.altitude * 180 / Math.PI);
-	var moonAz = Math.round(moonPos.azimuth * 180 / Math.PI);
+	var moonAz = Math.round(moonPos.azimuth * 180 / Math.PI) - 180;
 	const sunPhase = {
 	    rise: {
 		ru:  'Восход',
@@ -264,6 +259,11 @@ weather = {
 	    }
 	};
 
+	if(sunAz < 0)
+	    sunAz += 360;
+	if(moonAz < 0)
+	    moonAz += 360;
+
 	this.updateSeason(now, coords.latitude);
 	this.setupNotifications(now, sunTimes, moonTimes);
 	this.updateTimeline(now, sunTimes);
@@ -272,6 +272,9 @@ weather = {
 	var isPolarDay = (now >= this.seasons[0] && now < this.seasons[2]);
 	if(coords.latitude < 0)
 	    isPolarDay = !isPolarDay;
+
+	this.dtVal.title = 'Sun position: altitude: ' + sunAlt + '\u00B0' +
+	    ', azimuth: ' + sunAz + '\u00B0 (' + this.degToCompass(sunAz) + ')';
 
 	if(now >= sunTimes.sunrise && now < sunTimes.sunriseEnd) {
 	    this.dtIcon.className = 'wi wi-sunrise';
@@ -311,9 +314,6 @@ weather = {
 	this.moonPhase.title = Math.round(moonIllumination.phase * 100) + '%';
 	this.moonDist.innerHTML = ' ' + Math.round(moonPos.distance) +
 	                          (this.lang === 'ru' ? ' км' : ' km');
-
-	if(moonAz < 0)
-	    moonAz += 360;
 
 	this.moonDist.title = 'altitude: ' + moonAlt + '\u00B0' +
 	                      ", azimuth: " + moonAz + '\u00B0  (' +
@@ -1001,8 +1001,6 @@ weather = {
 	}, this);
 	this.showNotify('Weather data updated');
 
-	//this.updateEffects(data);
-
 	this.locName.innerHTML = (location.name ? location.name : '--') +
 	                         '&nbsp;&nbsp;(' +
 	                         (location.country ? location.country : '--') + ')';
@@ -1258,11 +1256,9 @@ weather = {
 		      "E", "ESE", "SE", "SSE",
 		      "S", "SSW", "SW", "WSW",
 		      "W", "WNW", "NW", "NNW"];
-	//var val = Math.floor((num / 22.5) + 0.5);
 	var index = Math.floor(((num + (360/16)/2) % 360) / (360/16));
 
 	return dirs[index];
-	//return dirs[(val % 16)];
     },
 
     parseTime: function(timeStr, dt) {
@@ -1485,25 +1481,6 @@ function populateSelect(select, options) {
     });
 }
 
-
-function rescale(ab, cd) {
-    var a = ab[0], b = ab[1];
-    var c = cd[0], d = cd[1];
-
-    if(a == b) {
-        console.error("Invalid scale");
-        return false;
-    }
-
-    var o = (b * c - a * d) / (b - a);
-    var s = (d - c) / (b - a);
-
-    return function(x) {
-        return s * x + o;
-    };
-}
-var fahr2celsius = rescale([32, 212], [0, 100]);
-//console.debug(fahr2celsius(98.6));// 37°C
 
 
 Date.fromJulian = function(j) {
