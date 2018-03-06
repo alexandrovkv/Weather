@@ -1,5 +1,5 @@
 # Weather-App
-Weather App - display current weather information
+Weather App - display current weather and Sun/Moon information
 ### Supported weather data providers
 * [Open Weather Map](http://openweathermap.org)
 * [World Meteorological Organization](https://www.wmo.int)
