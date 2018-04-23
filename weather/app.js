@@ -533,25 +533,23 @@ weather = {
 		}
 	    };
 
-	    console.debug('nadir:', sunTimes.nadir.format('dd-mm-yyyy HH:MM:ss'));
-	    console.debug('nightEnd:', sunTimes.nightEnd.format('dd-mm-yyyy HH:MM:ss'));
-	    console.debug('nauticalDawn:', sunTimes.nauticalDawn.format('dd-mm-yyyy HH:MM:ss'));
-	    console.debug('dawn:', sunTimes.dawn.format('dd-mm-yyyy HH:MM:ss'));
-	    console.debug('sunrise:', sunTimes.sunrise.format('dd-mm-yyyy HH:MM:ss'));
-	    console.debug('sunriseEnd:', sunTimes.sunriseEnd.format('dd-mm-yyyy HH:MM:ss'));
-	    console.debug('goldenHourEnd:', sunTimes.goldenHourEnd.format('dd-mm-yyyy HH:MM:ss'));
-	    console.debug('solarNoon:', sunTimes.solarNoon.format('dd-mm-yyyy HH:MM:ss'));
-	    console.debug('goldenHour:', sunTimes.goldenHour.format('dd-mm-yyyy HH:MM:ss'));
-	    console.debug('sunsetStart:', sunTimes.sunsetStart.format('dd-mm-yyyy HH:MM:ss'));
-	    console.debug('sunset:', sunTimes.sunset.format('dd-mm-yyyy HH:MM:ss'));
-	    console.debug('dusk:', sunTimes.dusk.format('dd-mm-yyyy HH:MM:ss'));
-	    console.debug('nauticalDusk:', sunTimes.nauticalDusk.format('dd-mm-yyyy HH:MM:ss'));
-	    console.debug('night:', sunTimes.night.format('dd-mm-yyyy HH:MM:ss'));
 
 	    var astrTwlLength = (sunTimes.night.getTime() - sunTimes.nightEnd.getTime()) / 1000;
+	    if(isNaN(astrTwlLength))
+		astrTwlLength = 60 * 60 * 24;
+
 	    var nautTwlLength = (sunTimes.nauticalDusk.getTime() - sunTimes.nauticalDawn.getTime()) / 1000;
+	    if(isNaN(nautTwlLength))
+		nautTwlLength = 60 * 60 * 24;
+
 	    var civilTwlLength = (sunTimes.dusk.getTime() - sunTimes.dawn.getTime()) / 1000;
+	    if(isNaN(civilTwlLength))
+		civilTwlLength = 60 * 60 * 24;
+
 	    var dayLength = (sunTimes.sunset.getTime() - sunTimes.sunrise.getTime()) / 1000;
+	    if(isNaN(dayLength))
+		dayLength = 60 * 60 * 24;
+
 	    var curPos = (now.getTime() - sunTimes.nadir.getTime()) / 1000;
 
 	    timeLine.title = title.night[this.lang];
